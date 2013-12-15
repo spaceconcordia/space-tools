@@ -1,16 +1,19 @@
 #include <stdlib.h>
 #include <cstdio>
+#include "base64.h"
+#include <iostream>
+#include <fstream>
 
-
+using namespace std;
 //--------------------
 // readFile
 //--------------------
 /*
  *  Reads a whole file into an array.
- *  Returns a char*
+ *  Returns a string*
  *  Free it yourself!.
  */
-char* readFile(const char* filename){
+string* readFile(const char* filename){
     FILE* fd  = fopen(filename, "rb");
     
     if (fd == NULL){
@@ -19,7 +22,7 @@ char* readFile(const char* filename){
     }
 
     char* buffer;
-    int fileSize = 0;
+    unsigned int fileSize = 0;
 
     fseek(fd, 0, SEEK_END);
     fileSize = ftell(fd);
@@ -39,20 +42,32 @@ char* readFile(const char* filename){
         fclose(fd);
         free(buffer);    
         buffer = NULL;
+        return NULL;
     }
+
+    printf("Filesize: %lld \n", (long long) fileSize);
+    printf("Buffer: %s \n", buffer);
+
+
+    string s = buffer;
+    string* encoded = new string(base64_encode(reinterpret_cast<const unsigned char*>(s.c_str()), s.length()));
 
     if (fd != NULL){
         fclose(fd);
     }
 
+   if (buffer != NULL) {
+        free(buffer);
+        buffer = NULL;
+    }
 
-    return buffer;
+    return encoded;
 }
 
 
 int main(int argc, char* argv[]){
     const char* filename = "a.txt";
-    char* file = NULL;
+    string* file = NULL;
 
     if (argc == 2){
         filename = argv[1];
@@ -60,10 +75,15 @@ int main(int argc, char* argv[]){
     
     file = readFile(filename);
     
-    printf("%s\n", file);
 
-    if (file != NULL){
-        free(file);
+    if (file != NULL) {
+        cout << "Base64:: " << *file << endl;
+        ofstream fstream;
+        fstream.open ("output");
+        fstream << *file;
+        fstream.close();
+        
+        delete file;
         file = NULL;
     }
 
