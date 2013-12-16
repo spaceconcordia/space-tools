@@ -37,7 +37,8 @@ string* readFile(const char* filename){
         exit(-1);
     }
 
-    if (fread(buffer, fileSize, 1, fd) != 1){
+    size_t read = fread(buffer, fileSize, 1, fd);
+    if (read <= 0){
         perror("Can't fread the file");
         fclose(fd);
         free(buffer);    
@@ -49,8 +50,9 @@ string* readFile(const char* filename){
     printf("Buffer: %s \n", buffer);
 
 
-    string s = buffer;
-    string* encoded = new string(base64_encode(reinterpret_cast<const unsigned char*>(s.c_str()), s.length()));
+    //string s = buffer;
+//    string* encoded = new string(base64_encode(reinterpret_cast<const unsigned char*>(s.c_str()), s.length()));
+    string* encoded = new string(base64_encode((const unsigned char*)buffer, fileSize));
 
     if (fd != NULL){
         fclose(fd);
