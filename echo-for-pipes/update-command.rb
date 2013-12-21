@@ -36,7 +36,15 @@ loop_times.times do |i|
     (3 - data_frame_length_bytes.length).times {|i| data_frame_length_bytes.unshift("30")}
     
     data_bytes_hex = data_frame_length_bytes.map{|s| "\\\\x#{s}"}.join + data_bytes[start...finish].map{|s| "\\\\x#{s}"}.join
+    
+    total = 1 + q6_path_length_bytes.length + q6_path_bytes.length + data_frame_length_bytes.length + (finish - start)
 
+
+    puts "echo -n -e \\\\x#{total.to_s(16)} > Inet-w-com-r\n"
     puts "echo -n -e \\\\x32#{q6_path_hex}#{data_bytes_hex} > Dnet-w-com-r\n"
+    puts "echo -n -e \\\\xFF > Inet-w-com-r\n"
+
+    puts "echo -n -e \\\\x01 > Inet-w-com-r\n"
     puts "echo -n -e \\\\x21 > Dnet-w-com-r\n"
+    puts "echo -n -e \\\\xFF > Inet-w-com-r\n"
 end
