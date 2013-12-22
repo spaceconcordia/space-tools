@@ -21,7 +21,7 @@ size_length_bytes = size.to_s.each_byte.map do |b|
     b.to_s(16)
 end
 
-(3 - size_length_bytes.length).times {|i| size_length_bytes.unshift("30")}
+(10 - size_length_bytes.length).times {|i| size_length_bytes.unshift("30")}
 
 total = src_path_length_bytes.length + src_path_bytes.length + dest_path_length_bytes.length + dest_path_bytes.length + 2 + size_length_bytes.length
 src_path_hex = "#{src_path_length_bytes.map{|s| "\\\\x#{s}"}.join}" + "#{src_path_bytes.map{|s| "\\\\x#{s}"}.join}"
